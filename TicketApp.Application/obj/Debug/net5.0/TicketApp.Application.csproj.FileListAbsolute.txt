@@ -1,0 +1,15 @@
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/TicketApp.Application.deps.json
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/TicketApp.Application.dll
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/ref/TicketApp.Application.dll
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/TicketApp.Application.pdb
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.csproj.AssemblyReference.cache
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.AssemblyInfoInputs.cache
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.AssemblyInfo.cs
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.csproj.CoreCompileInputs.cache
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.dll
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/ref/TicketApp.Application.dll
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.pdb
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/TicketApp.Core.dll
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/bin/Debug/net5.0/TicketApp.Core.pdb
+/Users/alicicek/RiderProjects/TicketApp/TicketApp.Application/obj/Debug/net5.0/TicketApp.Application.csproj.CopyComplete
