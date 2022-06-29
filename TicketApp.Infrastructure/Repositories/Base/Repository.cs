@@ -30,12 +30,13 @@ namespace TicketApp.Core.Repositories.Base
                 if (string.IsNullOrWhiteSpace(settings.Value.MongoConnectionString) ||
                     string.IsNullOrWhiteSpace(settings.Value.MongoDatabaseName))
                 {
-                    using (var err = new Error("Core", "Get configuration values", "Empty configuration information.",
-                               (int) HttpStatusCode.NotFound,
+                    using var dataResult = new DataResult();
+                    using (var err = new Error("Core", "Get configuration values",
+                               new List<string> {"Empty configuration information."},
                                10000))
-                    {
-                        throw new AppSettingsNotFoundException(err.ToString());
-                    }
+                        dataResult.Error = err;
+                    dataResult.HttpStatusCode = (int) HttpStatusCode.NotFound;
+                    throw new AppSettingsNotFoundException(dataResult.ToString());
                 }
                 else
                 {
@@ -47,13 +48,13 @@ namespace TicketApp.Core.Repositories.Base
             }
             else
             {
+                using var dataResult = new DataResult();
                 using (var err = new Error("Core", "Get configuration",
-                           "There is no configuration in app settings model.",
-                           (int) HttpStatusCode.NotFound,
+                           new List<string> {"There is no configuration in app settings model."},
                            10000))
-                {
-                    throw new AppSettingsNotFoundException(err.ToString());
-                }
+                    dataResult.Error = err;
+                dataResult.HttpStatusCode = (int) HttpStatusCode.NotFound;
+                throw new AppSettingsNotFoundException(dataResult.ToString());
             }
         }
 
@@ -165,10 +166,11 @@ namespace TicketApp.Core.Repositories.Base
             return _collection.CountDocuments(filterExpression);
         }
 
-        public TDocument FindById(Guid id)
+        public TDocument FindById(string id)
         {
             var filter = Builders<TDocument>.Filter.Eq(a => a.Id, id);
-            return _collection.Find(filter).FirstOrDefault();
+            var res = _collection.Find(filter).FirstOrDefault();
+            return res;
         }
 
         public TDocument FindOne(Expression<Func<TDocument, bool>> filterExpression)
@@ -181,7 +183,7 @@ namespace TicketApp.Core.Repositories.Base
             return Task.Run(() => _collection.Find(filterExpression).FirstOrDefault());
         }
 
-        public Task<TDocument> FindByIdAsync(Guid id)
+        public Task<TDocument> FindByIdAsync(string id)
         {
             return Task.Run(() =>
             {
@@ -192,14 +194,19 @@ namespace TicketApp.Core.Repositories.Base
 
         public TDocument InsertOne(TDocument document)
         {
-            document.Id = Guid.NewGuid();
+            document.Id = Guid.NewGuid().ToString();
+            document.CreatedAt = DateTime.Now;
             _collection.InsertOne(document);
             return document;
         }
 
         public ICollection<TDocument> InsertMany(ICollection<TDocument> documents)
         {
-            documents.ToList().ForEach(a => a.Id = Guid.NewGuid());
+            documents.ToList().ForEach(a =>
+            {
+                a.Id = Guid.NewGuid().ToString();
+                a.CreatedAt = DateTime.Now;
+            });
             _collection.InsertMany(documents);
             return documents;
         }
@@ -208,7 +215,8 @@ namespace TicketApp.Core.Repositories.Base
         {
             return Task.Run(() =>
             {
-                document.Id = Guid.NewGuid();
+                document.Id = Guid.NewGuid().ToString();
+                document.CreatedAt = DateTime.Now;
                 _collection.InsertOne(document);
                 return document;
             });
@@ -218,7 +226,11 @@ namespace TicketApp.Core.Repositories.Base
         {
             return Task.Run(() =>
             {
-                documents.ToList().ForEach(a => a.Id = Guid.NewGuid());
+                documents.ToList().ForEach(a =>
+                {
+                    a.Id = Guid.NewGuid().ToString();
+                    a.CreatedAt = DateTime.Now;
+                });
                 _collection.InsertMany(documents);
                 return documents;
             });
@@ -227,7 +239,11 @@ namespace TicketApp.Core.Repositories.Base
         public TDocument ReplaceOne(TDocument document)
         {
             var filter = Builders<TDocument>.Filter.Eq(a => a.Id, document.Id);
-            document.Id ??= Guid.NewGuid();
+            if (string.IsNullOrWhiteSpace(document.Id))
+            {
+                document.Id = Guid.NewGuid().ToString();
+                document.CreatedAt = DateTime.Now;
+            }
 
             var result = _collection.ReplaceOne(filter, document);
             if (result.ModifiedCount > 0)
@@ -246,7 +262,7 @@ namespace TicketApp.Core.Repositories.Base
             });
         }
 
-        public bool DeleteOneById(Guid id)
+        public bool DeleteOneById(string id)
         {
             var filter = Builders<TDocument>.Filter.Eq(a => a.Id, id);
             var result = _collection.DeleteOne(filter);
@@ -294,7 +310,7 @@ namespace TicketApp.Core.Repositories.Base
             });
         }
 
-        public Task DeleteByIdAsync(Guid id)
+        public Task DeleteByIdAsync(string id)
         {
             return Task.Run(() =>
             {

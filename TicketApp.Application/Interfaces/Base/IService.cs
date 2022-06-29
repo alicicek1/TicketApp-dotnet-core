@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using TicketApp.Application.Models.Request;
-using TicketApp.Application.Models.Response;
 using TicketApp.Core.Entities.Base;
 using TicketApp.Core.Util.Filter;
+using TicketApp.Core.Util.Result;
 
 namespace TicketApp.Application.Interfaces.Base
 {
@@ -12,8 +12,8 @@ namespace TicketApp.Application.Interfaces.Base
         where TRequest : BaseRequestModel
     {
         List<TDocument> GetAll(DataFilter dataFilter);
-        TDocument GetById(Guid id);
-        UpsertResponseModel Upsert(TRequest reqModel);
-        DeleteResponseModel Delete(TRequest reqModel);
+        TDocument GetById(string id);
+        DataResult Upsert(TRequest reqModel);
+        DataResult Delete(string id);
     }
 }

@@ -1,38 +1,54 @@
+using System;
 using System.Collections.Generic;
+using System.IO.Enumeration;
 using System.Linq;
 using System.Reflection;
 using MongoDB.Bson.Serialization.Attributes;
+using TicketApp.Application.Models.Response;
 using TicketApp.Core.Entities.Base;
+using TicketApp.Core.Util.Result;
+using TicketApp.Infrastructure.Extension;
 
 namespace TicketApp.Core.Util.Result
 {
-    public class DataResult : ApiResult
+    public class DataResult : IDisposable
     {
-        private IDocument _data;
+        private BaseResponseModel _data;
+        private bool _isSuccesful;
 
-        public string PkId { get; set; }
+        public Error? Error { get; set; }
+        public int HttpStatusCode { get; set; }
 
-        public IDocument Data
+        public bool IsScucceful
         {
-            get { return _data; }
-            set
+            get { return _isSuccesful; }
+            private set
             {
-                _data = value;
-                if (_data != null)
+                _isSuccesful = value;
+                if (this.Error != null)
                 {
-                    this.IsSuccessful = true;
-                    var findPkIdAttribute = _data.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .FirstOrDefault(a => a.GetCustomAttributes<BsonIdAttribute>() != null).GetValue(_data);
-                    if (findPkIdAttribute != null)
-                    {
-                        this.PkId = findPkIdAttribute.ToString();
-                    }
+                    _isSuccesful = false;
                 }
-                else if (!IsSuccessful && !this.ErrorMessageList.Any())
+                else
                 {
-                    this.ErrorMessageList = new List<string> {"Not found."};
+                    _isSuccesful = true;
                 }
             }
+        }
+
+        public BaseResponseModel? Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public override string ToString()
+        {
+            return this.ToJSON();
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

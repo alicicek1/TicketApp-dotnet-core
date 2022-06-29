@@ -8,9 +8,12 @@ namespace TicketApp.Core.Entities.Base
     {
         [BsonId]
         [BsonRepresentation(BsonType.String)]
-        Guid? Id { get; set; }
+        string? Id { get; set; }
 
-        DateTime CreatedDate { get; set; }
-        DateTime UpdatedDate { get; set; }
+        [BsonElement("createdAt")] DateTime CreatedAt { get; set; }
+
+        [BsonElement("updatedAt")]
+        [BsonIgnoreIfNull]
+        DateTime UpdatedAt { get; set; }
     }
 }

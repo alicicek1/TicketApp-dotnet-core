@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TicketApp.Application.Interfaces;
-using TicketApp.Application.Interfaces.Base;
 using TicketApp.Application.Mapper;
 using TicketApp.Application.Services;
 using TicketApp.Core.Configuration;
@@ -17,6 +11,7 @@ using TicketApp.Core.Entities;
 using TicketApp.Core.Repositories.Base;
 using TicketApp.Infrastructure.Repositories;
 using TicketApp.Web.MvcFilters;
+using TokenValidatorHandler = TicketApp.Web.Middleware.TokenValidatorHandler;
 
 namespace TicketApp.Web
 {
@@ -43,6 +38,8 @@ namespace TicketApp.Web
             }
 
             app.UseRouting();
+
+            app.UseMiddleware<TokenValidatorHandler>();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

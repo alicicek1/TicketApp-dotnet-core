@@ -25,10 +25,10 @@ namespace TicketApp.Core.Repositories.Base
         long GetCount();
         long GetCountBy(FilterDefinition<TDocument> filterExpression);
 
-        TDocument FindById(Guid id);
+        TDocument FindById(string id);
         TDocument FindOne(Expression<Func<TDocument, bool>> filterExpression);
         Task<TDocument> FindOneAsync(Expression<Func<TDocument, bool>> filterExpression);
-        Task<TDocument> FindByIdAsync(Guid id);
+        Task<TDocument> FindByIdAsync(string id);
 
         TDocument InsertOne(TDocument document);
         ICollection<TDocument> InsertMany(ICollection<TDocument> documents);
@@ -38,11 +38,11 @@ namespace TicketApp.Core.Repositories.Base
         TDocument ReplaceOne(TDocument document);
         Task ReplaceOneAsync(TDocument document);
 
-        bool DeleteOneById(Guid id);
+        bool DeleteOneById(string id);
         bool DeleteOne(Expression<Func<TDocument, bool>> filterExpression);
         bool DeleteMany(Expression<Func<TDocument, bool>> filterExpression);
         Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression);
-        Task DeleteByIdAsync(Guid id);
+        Task DeleteByIdAsync(string id);
         Task DeleteManyAsync(Expression<Func<TDocument, bool>> filterExpression);
     }
 }

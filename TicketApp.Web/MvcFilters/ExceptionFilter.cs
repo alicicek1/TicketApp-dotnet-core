@@ -1,12 +1,11 @@
-using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 using TicketApp.Core.Util.Result;
 using TicketApp.Infrastructure.Exceptions;
+using TicketApp.Web.Exception;
 
 namespace TicketApp.Web.MvcFilters
 {
@@ -17,17 +16,16 @@ namespace TicketApp.Web.MvcFilters
             switch (context.Exception)
             {
                 case AppSettingsNotFoundException:
-                    var resObj = JsonConvert.DeserializeObject<Error>(context.Exception.Message);
-                    if (resObj != null)
-                    {
-                        context.HttpContext.Response.StatusCode = resObj.HttpStatusCode;
-                        context.Result = new JsonResult(resObj);
-                    }
-                    else
-                    {
-                        context.Result = new JsonResult("Invalid error format!");
-                    }
-
+                    ManipulateReponse(context);
+                    break;
+                case EmptyTokenException:
+                    ManipulateReponse(context);
+                    break;
+                case EmptyPathVariableException:
+                    ManipulateReponse(context);
+                    break;
+                case InvalidPathVariableException:
+                    ManipulateReponse(context);
                     break;
                 default:
                     var errMessage = context.Exception.Message;
@@ -36,12 +34,36 @@ namespace TicketApp.Web.MvcFilters
                         errMessage = string.Join(" - ", errMessage, context.Exception.InnerException.Message);
                     }
 
-                    context.HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                    context.Result = new JsonResult(new Error("Exception handler", "Exception handling",
-                        $"An unexpected error occured. - {errMessage}", (int) HttpStatusCode.InternalServerError,
-                        4000));
+                    using (var dataResult = new DataResult())
+                    {
+                        using (var err = new Error("Exception handler", "Exception handling",
+                                   new List<string> {$"An unexpected error occured. - {errMessage}"},
+                                   4000))
+                            dataResult.Error = err;
+                        dataResult.HttpStatusCode = (int) HttpStatusCode.InternalServerError;
+
+                        context.HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+
+                        context.Result = new JsonResult(dataResult);
+                    }
 
                     break;
+            }
+        }
+
+        private void ManipulateReponse(ExceptionContext context)
+        {
+            var appSettingsNotFoundExceptionObj =
+                JsonConvert.DeserializeObject<DataResult>(context.Exception.Message);
+            if (appSettingsNotFoundExceptionObj != null)
+            {
+                context.HttpContext.Response.StatusCode = appSettingsNotFoundExceptionObj.HttpStatusCode;
+                context.Result = new JsonResult(appSettingsNotFoundExceptionObj);
+            }
+            else
+            {
+                context.HttpContext.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                context.Result = new JsonResult($"Invalid error format! - {context.Exception.Message}");
             }
         }
     }
